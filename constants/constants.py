@@ -12,3 +12,6 @@ u'MAGENTA': (0.75, 0, 0.75)
 
 #standardcolor used then the color is not in the COLOR dict 
 STANDARD_COLOR="BLACK"
+
+SCREEN_WIDTH=800
+SCREEN_HEIGHT=600

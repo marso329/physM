@@ -23,7 +23,7 @@ class cube(objectSuperClass):
     3:(2,1),
     4:(2,3),
     5:(2,7),
-    5:(6,3),
+    6:(6,3),
     7:(6,4),
     8:(6,7),
     9:(5,1),
@@ -43,6 +43,7 @@ class cube(objectSuperClass):
         self.width=width
         self.height=height
         self.create()
+        self.add_to_world()
     
     def create(self):
         for i in range(self.number_of_vertices):
@@ -53,6 +54,10 @@ class cube(objectSuperClass):
                 
         
     def load(self):
-        pass
+        glBegin(GL_LINES)
+        for i in range(self.number_of_edges):
+            for j in range(2):
+                glVertex3fv(self.vertices[self.edges[i][j]])
+        glEnd()
     
         
