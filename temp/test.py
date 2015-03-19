@@ -81,7 +81,6 @@ def DrawGLScene():
     # Clear The Screen And The Depth Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()                    # Reset The View 
-
     # Move Left 1.5 units and into the screen 6.0 units.
     glTranslatef(-1.5, 0.0, -6.0)
 
@@ -120,7 +119,6 @@ def DrawGLScene():
     # smaller values work better, but this was based on my experience.
     rtri  = rtri + 1.0                  # Increase The Rotation Variable For The Triangle
     rquad = rquad - 1.0                 # Decrease The Rotation Variable For The Quad
-
 
     #  since this is double buffered, swap the buffers to display what just got drawn. 
     glutSwapBuffers()

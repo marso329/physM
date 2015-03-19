@@ -10,6 +10,7 @@ import os, sys, inspect
 import constants.constants as con
 import variables.variables as var
 from enviroment.enviroment import *
+from constants.constants import ESCAPE
 
 #add the physM folder to PYTHONPATH
 abs_path=os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
@@ -19,11 +20,13 @@ sys.path.append(abs_path[:abs_path.rfind("/")])
 #Initiate GLUT for the windowhandling
 glutInit("")
 
-glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH)
+glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA )
 
 glutInitWindowSize(con.SCREEN_WIDTH, con.SCREEN_HEIGHT)
 
+
 glutInitWindowPosition(0, 0)
+
 
 var.window = glutCreateWindow("PhysM")
 
@@ -39,8 +42,13 @@ glDepthFunc(GL_LESS)
 # Enables Depth Testing
 glEnable(GL_DEPTH_TEST)
 
+# enable transpercy
+glEnable(GL_BLEND)
+
 # Enables Smooth Color Shading
 glShadeModel(GL_SMOOTH)
+
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     
 #sets which matrix is subject to the following operations
 glMatrixMode(GL_PROJECTION)
@@ -52,14 +60,19 @@ glLoadIdentity()
 gluPerspective(50, (con.SCREEN_WIDTH/con.SCREEN_HEIGHT), 0.1, 50.0)
 
 #the initial position for the perspective
-glTranslatef(0.0,0.0, -5)
+glTranslatef(var.viewing_position[0],var.viewing_position[1], var.viewing_position[2])
 
 #sets which matrix is subject to the following operations
 glMatrixMode(GL_MODELVIEW)
 
-glutKeyboardFunc(keyPressed)
+
+glutKeyboardFunc(key_pressed)
+glutSpecialFunc(key_pressed)
 
 glutDisplayFunc(render)
 
 glutIdleFunc(render)
+
+glutReshapeFunc(resize_window)
+bind_key(ESCAPE, exit_function)
 
