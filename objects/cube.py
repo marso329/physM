@@ -16,6 +16,7 @@ class cube(objectSuperClass):
     Y_LOWER=[6,4,3,0]
     Z_LOWER=[3,0,1,2]
     number_of_edges=12
+    number_of_triangles=12
     edges = {
     0:(0,1),
     1:(0,3),
@@ -30,6 +31,19 @@ class cube(objectSuperClass):
     10:(5,4),
     11:(5,7)
     }
+    triangles={0:(4,7,6),
+               1:(4,5,7),
+               2:(4,0,1),
+               3:(4,1,5),
+               4:(3,1,0),
+               5:(3,2,1),
+               6:(6,7,2),
+               7:(6,2,3),
+               8:(7,5,1),
+               9:(7,2,2),
+               10:(6,0,4),
+               11:(6,3,0)
+               }
     number_of_vertices=8
     length=0
     width=0
@@ -44,20 +58,26 @@ class cube(objectSuperClass):
         self.height=height
         self.create()
         self.add_to_world()
-    
     def create(self):
         for i in range(self.number_of_vertices):
             temp=self.vertices[i]
             temp_new=(temp[0]*self.length/2.0,temp[1]*self.width/2.0,temp[2]*self.height/2.0)
             self.vertices[i]=temp_new
             
-                
-        
     def load(self):
-        glBegin(GL_LINES)
-        for i in range(self.number_of_edges):
-            for j in range(2):
-                glVertex3fv(self.vertices[self.edges[i][j]])
+        if not self.solid:
+            glBegin(GL_LINES)
+            glColor3f(self.color[0],self.color[1],self.color[2])
+            for i in range(self.number_of_edges):
+                for j in range(2):
+                    glVertex3fv(self.vertices[self.edges[i][j]])
+        else:
+            glBegin(GL_TRIANGLES)
+            glColor3f(self.color[0],self.color[1],self.color[2])
+            for i in range(self.number_of_triangles):
+                for j in range(3):
+                    glVertex3fv(self.vertices[self.triangles[i][j]])
+            
         glEnd()
     
         

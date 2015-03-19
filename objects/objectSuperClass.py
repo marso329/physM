@@ -1,9 +1,11 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
-import constants.constants as constants
-import variables.variables as variables
+import constants.constants as con
+import variables.variables as var
 import inspect
 class objectSuperClass:
+    color=(1.0,1.0,1.0)
+    solid=False
     def __init__(self):
         pass
     def load(self):
@@ -15,14 +17,17 @@ class objectSuperClass:
     
     def check_color(self,color):
         try:
-            constants.COLORS[color]
+            self.color=con.COLORS[color]
         except KeyError:
-            color=constants.STANDARD_COLOR
+            self.color=con.STANDARD_COLOR
     def check_if_float_or_int(self,value):
         return isinstance(value,(int, long,float))
+    def set_solid(self):
+        self.solid=True
     #adds itself to the world
     def add_to_world(self):
-        variables.objects_in_world[variables.number_of_objects_in_world]=self
-        variables.number_of_objects_in_world+=1
+        var.objects_in_world[var.number_of_objects_in_world]=self
+        var.number_of_objects_in_world+=1
+    
         
     

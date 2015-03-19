@@ -29,6 +29,7 @@ edges = (
     (5,4),
     (5,7)
     )
+squads={}
 
 
 def Cube():
