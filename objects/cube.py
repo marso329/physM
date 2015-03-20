@@ -6,6 +6,7 @@ class cube(objectSuperClass):
         assert(self.check_if_float_or_int(width))
         assert(self.check_if_float_or_int(height))
         objectSuperClass.__init__(self)
+        self.index = glGenLists(1)
         self.vertices={
         0:(1.0, -1.0, -1.0),
         1:(1.0, 1.0, -1.0),
@@ -57,6 +58,7 @@ class cube(objectSuperClass):
         self.length=length
         self.width=width
         self.height=height
+        self.first_load=True
         self.create()
         self.add_to_world()
         #super(objectSuperClass, self).__init__()
@@ -67,7 +69,15 @@ class cube(objectSuperClass):
             self.vertices[i]=temp_new
             
     def load(self):
-        self.update_everything()        
+        if self.first_load:
+            self.load_first()
+            self.first_load=False
+        else:
+            self.update_everything()
+            glCallList(self.index)
+    def load_first(self):
+        self.update_everything()
+        glNewList(self.index, GL_COMPILE)        
         if not self.solid:
             glBegin(GL_LINES)
             if not self.transparency_enabled:
@@ -89,5 +99,6 @@ class cube(objectSuperClass):
                     glVertex3fv(self.vertices[self.triangles[i][j]])
             
         glEnd()
+        glEndList()
     
         

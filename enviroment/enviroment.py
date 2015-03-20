@@ -5,8 +5,13 @@ import pygame
 import variables.variables as var
 import constants.constants as con
 from OpenGL.raw.GLU import gluLookAt
+import time
+
 
 def render():
+    if var.fps:
+        count_fps()
+    print(var.current_fps)
     glMatrixMode(GL_MODELVIEW)
     #clear buffer
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
@@ -26,6 +31,13 @@ def render():
     
     #exchange buffer
     glutSwapBuffers()
+def count_fps():
+    if var.fps_time+1<time.time():
+        var.current_fps=var.fps_counter
+        var.fps_time=time.time()
+        var.fps_counter=0
+    else:
+        var.fps_counter+=1
     
 def exit_function():
     glutDestroyWindow(var.window)
@@ -35,6 +47,10 @@ def key_pressed(*args):
         var.key_bindings[args[0]]()
     except KeyError:
         pass
+def enable_fps_counter():
+    var.fps=True
+def disable_fps_counter():
+    var.fps=False
 
 def check_color(color):
     try:

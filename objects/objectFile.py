@@ -1,15 +1,18 @@
 from objects.objectSuperClass import *
 from constants.constants import PRIMITIVE_LOOKUP
+from xdg.BaseDirectory import load_first_config
 class objectFile(objectSuperClass):
 
     def __init__(self,filename):
         objectSuperClass.__init__(self)
         self.vertices={}
+        self.index = glGenLists(1)
         self.number_of_vertices=1
         self.primitive=None
         self.primitive_set=False
         self.primitive_number=0
         self.faces={}
+        self.first_load=True
         self.number_of_faces=0
         for line in open(filename,"r"):
             if line.startswith('#'): continue
@@ -33,7 +36,15 @@ class objectFile(objectSuperClass):
                 self.number_of_faces+=1
         self.add_to_world()
     def load(self):
+        if self.first_load:
+            self.load_first()
+            self.first_load=False
+        else:
+            self.update_everything()
+            glCallList(self.index)
+    def load_first(self):
         self.update_everything()
+        glNewList(self.index, GL_COMPILE) 
         glBegin(self.primitive)
         if not self.transparency_enabled:
             glColor3f(self.color[0],self.color[1],self.color[2])
@@ -43,6 +54,7 @@ class objectFile(objectSuperClass):
             for j in range(self.primitive_number):
                 glVertex3fv(self.vertices[self.faces[i][j]])
         glEnd()
+        glEndList()
                 
                      
     def set_primitive(self,x):
