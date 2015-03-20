@@ -11,7 +11,10 @@ import time
 def render():
     if var.fps:
         count_fps()
+    if var.holding:
+        hold()
     print(var.current_fps)
+    print(var.viewing_position)
     glMatrixMode(GL_MODELVIEW)
     #clear buffer
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
@@ -31,9 +34,27 @@ def render():
     
     #exchange buffer
     glutSwapBuffers()
+def hold():
+    if var.current_fps>var.holding_fps+var.holding_delta:
+        if var.holding_change_time+var.holding_timer<time.time():
+            if var.holding_sleep==0.0:
+                var.holding_sleep=0.01
+            var.holding_sleep*=2
+            var.holding_change_time=time.time()
+    if var.current_fps<var.holding_fps-var.holding_delta:
+        if var.holding_change_time+var.holding_timer<time.time():
+            if var.holding_sleep==0.0:
+                var.holding_sleep=0.01
+            var.holding_sleep/=2
+            var.holding_change_time=time.time()
+    time.sleep(var.holding_sleep)
+            
+        
+            
+        
 def count_fps():
-    if var.fps_time+1<time.time():
-        var.current_fps=var.fps_counter
+    if var.fps_time+var.fps_timer<time.time():
+        var.current_fps=var.fps_counter/var.fps_timer
         var.fps_time=time.time()
         var.fps_counter=0
     else:
@@ -51,7 +72,14 @@ def enable_fps_counter():
     var.fps=True
 def disable_fps_counter():
     var.fps=False
-
+    disable_hold_fps()
+def hold_fps(fps):
+    assert(isinstance(fps,(int,float)) and fps>0.0)
+    enable_fps_counter()
+    var.holding=True
+    var.holding_fps=fps
+def disable_hold_fps():
+    var.holding=False
 def check_color(color):
     try:
         con.COLORS[color]
@@ -87,5 +115,5 @@ def resize_window(Width, Height):
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     gluPerspective(45.0, float(Width)/float(Height), 0.1, 50.0)
-    glTranslatef(var.viewing_position[0],var.viewing_position[1], var.viewing_position[2])
+    #glTranslatef(var.viewing_position[0],var.viewing_position[1], var.viewing_position[2])
     glMatrixMode(GL_MODELVIEW)

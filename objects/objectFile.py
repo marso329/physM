@@ -1,6 +1,5 @@
 from objects.objectSuperClass import *
 from constants.constants import PRIMITIVE_LOOKUP
-from xdg.BaseDirectory import load_first_config
 class objectFile(objectSuperClass):
 
     def __init__(self,filename):
@@ -34,7 +33,6 @@ class objectFile(objectSuperClass):
                     temp=temp+(v[i],)
                 self.faces[self.number_of_faces]=temp
                 self.number_of_faces+=1
-        self.add_to_world()
     def load(self):
         if self.first_load:
             self.load_first()

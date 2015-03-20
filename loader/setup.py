@@ -60,7 +60,7 @@ glLoadIdentity()
 gluPerspective(50, (con.SCREEN_WIDTH/con.SCREEN_HEIGHT), 0.1, 50.0)
 
 #the initial position for the perspective
-glTranslatef(var.viewing_position[0],var.viewing_position[1], var.viewing_position[2])
+#glTranslatef(var.viewing_position[0],var.viewing_position[1], var.viewing_position[2])
 
 #sets which matrix is subject to the following operations
 glMatrixMode(GL_MODELVIEW)
@@ -73,6 +73,6 @@ glutDisplayFunc(render)
 
 glutIdleFunc(render)
 
-glutReshapeFunc(resize_window)
+#glutReshapeFunc(resize_window)
 bind_key(ESCAPE, exit_function)
 

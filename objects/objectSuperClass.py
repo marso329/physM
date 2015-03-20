@@ -17,6 +17,7 @@ class objectSuperClass:
         self.mover=None
         self.rotate_with_object=False
         self.rotater=None
+        self.add_to_world()
     def set_transparency(self,trans):
         assert(isinstance(trans, (float,int)) and trans<=1.0 and trans>=0)
         self.transparency=trans

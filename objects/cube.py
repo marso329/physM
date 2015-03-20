@@ -60,7 +60,6 @@ class cube(objectSuperClass):
         self.height=height
         self.first_load=True
         self.create()
-        self.add_to_world()
         #super(objectSuperClass, self).__init__()
     def create(self):
         for i in range(self.number_of_vertices):
