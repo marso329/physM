@@ -21,6 +21,8 @@ class objectFile(objectSuperClass):
                 v=list(map(float,values[1:4]))
                 v=v[0],v[1],v[2]
                 self.vertices[self.number_of_vertices]=v
+                if max(v)>self.max_distance_from_centre:
+                    self.max_distance_from_centre=max(v)
                 self.number_of_vertices+=1
             if values[0]=="f":
                 values=values[1:]

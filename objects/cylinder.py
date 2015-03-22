@@ -12,6 +12,7 @@ class cylinder(objectSuperClass):
         self.first_load=True
         self.radius=radius
         self.height=height
+        self.max_distance_from_centre=max(radius,height)
         self.index = glGenLists(1)
     def load_first(self):
         self.update_everything()

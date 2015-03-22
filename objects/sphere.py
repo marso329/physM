@@ -11,6 +11,7 @@ class sphere(objectSuperClass):
         self.first_load=True
         self.radius=radius
         self.index = glGenLists(1)
+        self.max_distance_from_centre=radius
     def load_first(self):
         self.update_everything()
         glNewList(self.index, GL_COMPILE)

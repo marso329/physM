@@ -4,6 +4,7 @@ from OpenGL.GLUT import *
 import pygame
 import variables.variables as var
 import constants.constants as con
+import physMMath.physMMath as Mmath
 from OpenGL.raw.GLU import gluLookAt
 import time
 
@@ -13,8 +14,7 @@ def render():
         count_fps()
     if var.holding:
         hold()
-    print(var.current_fps)
-    print(var.viewing_position)
+    check_for_collisions()
     glMatrixMode(GL_MODELVIEW)
     #clear buffer
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
@@ -23,7 +23,7 @@ def render():
     #setup where to look at
     gluLookAt(    var.viewing_position[0], var.viewing_position[1], var.viewing_position[2],
            var.viewing_center[0], var.viewing_center[1],  var.viewing_center[2],
-            0.0, 1.0,  0.0)
+            0.0, 0.0,  1.0)
     #set the background
     glClearColor(var.background_color[0],var.background_color[1],var.background_color[2],var.background_color[3])
     #load all objects
@@ -34,18 +34,34 @@ def render():
     
     #exchange buffer
     glutSwapBuffers()
+    run_functions()
+def add_function_to_mainloop(func):
+    assert(callable(func))
+    var.functions_to_run_in_mainloop[var.functions_in_mainloop]=func
+    var.functions_in_mainloop+=1
+def check_for_collisions():
+    combinations=Mmath.get_combinations(range(var.number_of_objects_in_world), 2)
+    for element in combinations:
+        if var.objects_in_world[element[0]].collision_possible(var.objects_in_world[element[1]]):
+            handle_collision(element)
+def handle_collision(elements):
+    pass
+    #print("object number "+str(elements[0]) +" and "+str(elements[1])+" could possible collide")
+def run_functions():
+    for i in range(var.functions_in_mainloop):
+        var.functions_to_run_in_mainloop[i]()
 def hold():
     if var.current_fps>var.holding_fps+var.holding_delta:
         if var.holding_change_time+var.holding_timer<time.time():
             if var.holding_sleep==0.0:
                 var.holding_sleep=0.01
-            var.holding_sleep*=2
+            var.holding_sleep*=1.2
             var.holding_change_time=time.time()
     if var.current_fps<var.holding_fps-var.holding_delta:
         if var.holding_change_time+var.holding_timer<time.time():
             if var.holding_sleep==0.0:
                 var.holding_sleep=0.01
-            var.holding_sleep/=2
+            var.holding_sleep/=1.2
             var.holding_change_time=time.time()
     time.sleep(var.holding_sleep)
             
@@ -54,7 +70,7 @@ def hold():
         
 def count_fps():
     if var.fps_time+var.fps_timer<time.time():
-        var.current_fps=var.fps_counter/var.fps_timer
+        var.current_fps=var.fps_counter/(time.time()-var.fps_time)
         var.fps_time=time.time()
         var.fps_counter=0
     else:

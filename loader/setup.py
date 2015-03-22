@@ -11,6 +11,7 @@ import constants.constants as con
 import variables.variables as var
 from enviroment.enviroment import *
 from constants.constants import ESCAPE
+import physMMath.physMMath as Mmath
 
 #add the physM folder to PYTHONPATH
 abs_path=os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
