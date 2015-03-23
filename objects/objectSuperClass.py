@@ -2,6 +2,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import constants.constants as con
 import variables.variables as var
+import physMMath.physMMath as Mmath
 import inspect
 import time
 from OpenGL.GL.VERSION.GL_1_0 import glGetDoublev
@@ -24,6 +25,11 @@ class objectSuperClass:
         self.time_since_change=time.time()
         self.affected_by_gravity=False
         self.max_distance_from_centre=0
+        self.collision_enabled=False
+        self.mass=1.0
+    def get_line_between_objects(self,object_in_world):
+        return Mmath.line(tuple(self.position),tuple(object_in_world.position))
+        
     def set_transparency(self,trans):
         assert(isinstance(trans, (float,int)) and trans<=1.0 and trans>=0)
         self.transparency=trans

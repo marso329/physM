@@ -1,4 +1,5 @@
 from objects.objectSuperClass import *
+import physMMath.physMMath as Mmath
 class sphere(objectSuperClass):
 
     def __init__(self,radius,color):
@@ -12,6 +13,15 @@ class sphere(objectSuperClass):
         self.radius=radius
         self.index = glGenLists(1)
         self.max_distance_from_centre=radius
+        self.collision_enabled=True
+        self.calculation_sphere=None
+    def get_normal(self,point):
+        return Mmath.sphere_normal(self.calculation_sphere, point)
+    def get_boundary_point(self,object_in_world):
+        line_between_objects=self.get_line_between_objects(object_in_world)
+        self.calculation_sphere=Mmath.sphere(tuple(self.position),self.radius)
+        solutions=Mmath.sphere_line_intersection(line_between_objects, self.calculation_sphere)
+        return Mmath.get_closest_point(solutions, tuple(object_in_world.position))
     def load_first(self):
         self.update_everything()
         glNewList(self.index, GL_COMPILE)

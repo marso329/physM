@@ -4,7 +4,7 @@ window=None
 background_color=(0,0,0,0)
 background_color_string="BLACK"
 viewing_center=(0,0,0)
-viewing_position=(-28.6,-22,5)
+viewing_position=(0,-22,0)
 key_bindings={}
 
 
@@ -27,3 +27,5 @@ functions_in_mainloop=0
 functions_to_run_in_mainloop={}
 
 gravity_vector=(0,0,-2.82)
+
+distance_for_collision=0.01

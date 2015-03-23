@@ -7,6 +7,7 @@ import constants.constants as con
 import physMMath.physMMath as Mmath
 from OpenGL.raw.GLU import gluLookAt
 import time
+import numpy as np
 
 
 def render():
@@ -45,8 +46,24 @@ def check_for_collisions():
         if var.objects_in_world[element[0]].collision_possible(var.objects_in_world[element[1]]):
             handle_collision(element)
 def handle_collision(elements):
-    pass
-    #print("object number "+str(elements[0]) +" and "+str(elements[1])+" could possible collide")
+    if var.objects_in_world[elements[0]].collision_enabled and var.objects_in_world[elements[1]].collision_enabled and objects_have_collided(elements):
+        calculate_velocity_after_impact(elements)
+def objects_have_collided(elements):
+    boundary_point_one=var.objects_in_world[elements[0]].get_boundary_point(var.objects_in_world[elements[1]])
+    boundary_point_two=var.objects_in_world[elements[1]].get_boundary_point(var.objects_in_world[elements[0]])
+    return Mmath.get_distance_between_points(boundary_point_one, boundary_point_two)<var.distance_for_collision
+
+def calculate_velocity_after_impact(elements):
+    boundary_point_one=var.objects_in_world[elements[0]].get_boundary_point(var.objects_in_world[elements[1]])
+    normal=var.objects_in_world[elements[0]].get_normal(boundary_point_one)
+    a1=np.dot(var.objects_in_world[elements[0]].position_change,normal)
+    a2=np.dot(var.objects_in_world[elements[1]].position_change,normal)
+    optimizedP = (2.0 * (a1 - a2)) / (var.objects_in_world[elements[0]].mass + var.objects_in_world[elements[1]].mass)
+    v1_prim= np.array(var.objects_in_world[elements[0]].position_change) - optimizedP * var.objects_in_world[elements[1]].mass * np.array(normal)
+    v2_prim= np.array(var.objects_in_world[elements[1]].position_change) + optimizedP * var.objects_in_world[elements[0]].mass * np.array(normal)
+    var.objects_in_world[elements[0]].position_change=list(v1_prim)
+    var.objects_in_world[elements[1]].position_change=list(v2_prim)
+    
 def run_functions():
     for i in range(var.functions_in_mainloop):
         var.functions_to_run_in_mainloop[i]()
