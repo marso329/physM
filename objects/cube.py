@@ -1,6 +1,8 @@
 from objects.objectSuperClass import *
+from objects import sphere
 import physMMath.physMMath as Mmath
 import numpy as np
+from physMMath.physMMath import dot_product
 class cube(objectSuperClass):
 
     def __init__(self,length,width,height,color):
@@ -9,6 +11,7 @@ class cube(objectSuperClass):
         assert(self.check_if_float_or_int(height))
         objectSuperClass.__init__(self)
         self.index = glGenLists(1)
+        
         self.vertices={
         0:(1.0, -1.0, -1.0),
         1:(1.0, 1.0, -1.0),
@@ -63,9 +66,6 @@ class cube(objectSuperClass):
                      }
         self.projection_planes={}
         self.number_of_vertices=8
-        self.length=0
-        self.width=0
-        self.height=0
         self.check_color(color)
         self.length=length
         self.width=width
@@ -88,47 +88,46 @@ class cube(objectSuperClass):
             self.first_load=False
         else:
             self.update_everything()
-            self.update_projection_planes()
-            self.move()
-            self.rotate()
             glCallList(self.index)
     #(x,y,z) is a in space, this function return this elements boundary point that is on the line between this point and
     #the elements centre 
     def get_boundary_point(self,object_in_world):
-        #the objects centre point projected
-        p1=gluProject(object_in_world.position[0],object_in_world.position[1],object_in_world.position[2])
-        #this objects centre point
-        p2=gluProject(self.position[0],self.position[1],self.position[2])
-        #a line between these objects
-        line=Mmath.line(p1,p2)
-        #calculate al normalds for this object
-        temp_normals=[]
+        #line between objects
+        line=Mmath.line(self.position,object_in_world.position)
+        #calculate new planes:
         for i in range(6):
-            temp_normals.append(np.array(self.projection_planes[i].normal)/sum(self.projection_planes[i].normal))
-        #calulcate the greatest dot product of a planes
-        temp_dot_products=[]
-        line_direction=[p1[0]-p2[0],p1[1]-p2[1],p1[2]-p2[2]]
-        line_direction=np.array(line_direction)/sum(line_direction)
+            point1=self.vertices[self.planes[i][0]]
+            point2=self.vertices[self.planes[i][1]]
+            point3=self.vertices[self.planes[i][2]]
+            point1=Mmath.calculate_projection_point(self, point1[0], point1[1], point1[2])
+            point2=Mmath.calculate_projection_point(self, point2[0], point2[1], point2[2])
+            point3=Mmath.calculate_projection_point(self, point3[0], point3[1], point3[2])
+            self.projection_planes[i]=Mmath.plane(point1,point2,point3)
+        #calculate all the solutions for the line and planes
+        solutions=[]
         for i in range(6):
-            temp_dot_products.append(np.dot(temp_normals[i],line_direction))
-        #returns the point on the plane with the greatest dot product 
-        temp= Mmath.get_line_intersection_with_plane(line, self.projection_planes[temp_dot_products.index(max(temp_dot_products))])
-        return gluUnProject(temp[0],temp[1],temp[2])
-    def update_projection_planes(self):
+            solutions.append(Mmath.get_line_intersection_with_plane(line, self.projection_planes[i]))
+        #find which plane is the right one
+        min=Mmath.get_distance_between_points(self.position, object_in_world.position)
+        index=0
         for i in range(6):
-            temp_vertex=self.vertices[self.planes[i][0]]
-            p1=gluProject(temp_vertex[0],temp_vertex[1],temp_vertex[2])
-            
-            temp_vertex=self.vertices[self.planes[i][1]]
-            p2=gluProject(temp_vertex[0],temp_vertex[1],temp_vertex[2])
-            
-            temp_vertex=self.vertices[self.planes[i][2]]
-            p3=gluProject(temp_vertex[0],temp_vertex[1],temp_vertex[2])
-            self.projection_planes[i]=Mmath.plane(p1,p2,p3)
-    
+            if not self.check_solution(solutions[i]):continue
+            temp_point=Mmath.calculate_unprojection_point(self, solutions[i][0], solutions[i][1], solutions[i][2])
+            if not self.check_point(temp_point):continue
+            distance=Mmath.get_distance_between_points(object_in_world.position,solutions[i])
+            if distance<min:
+                min=distance
+                index=i
+        return solutions[index]
+    #checks so point is inside this object, use  unproject if its a point on the edges
+    def check_point(self,point):
+        marginal=var.marginal_for_checking_boundary_checking
+        return abs(point[0])-marginal<self.length/2.0 and abs(point[1])-marginal<self.width/2.0 and abs(point[2])-marginal<self.height/2.0
+    def check_solution(self,solution):
+        element=solution
+        return abs(element[0])<var.max_value_for_solution and abs(element[1])<var.max_value_for_solution and abs(element[2])<var.max_value_for_solution
     def load_first(self):
         self.update_everything()
-        self.update_projection_planes()
         glNewList(self.index, GL_COMPILE)        
         if not self.solid:
             glBegin(GL_LINES)

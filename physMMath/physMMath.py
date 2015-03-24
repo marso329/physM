@@ -1,6 +1,7 @@
 import numpy as np
 import itertools
 from math import sqrt
+import variables.variables as var
 
 class plane():
     def __init__(self,p1,p2,p3):
@@ -13,7 +14,9 @@ class line():
     def __init__(self,p1,p2):
         self.p1=p1
         self.p2=p2
+        self.line=p1[0]-p2[0],p1[1]-p2[1],p1[2]-p2[2]
         
+
 class sphere():
     def __init__(self,centre_point,R):
         self.centre=centre_point
@@ -26,6 +29,44 @@ def calc_plane(v1,v2,v3):
     a = np.column_stack((x, y, z))
     return list(np.linalg.lstsq(a, np.ones_like(x))[0])
 
+def calculate_rotation_matrix(object_in_world):
+    x_cos=np.cos(np.radians(object_in_world.angles[0]))
+    y_cos=np.cos(np.radians(object_in_world.angles[1]))
+    z_cos=np.cos(np.radians(object_in_world.angles[2]))
+    
+    x_sin=np.sin(np.radians(object_in_world.angles[0]))
+    y_sin=np.sin(np.radians(object_in_world.angles[1]))
+    z_sin=np.sin(np.radians(object_in_world.angles[2]))
+    
+    x_matrix=np.matrix([[1,0,0],[0,x_cos,-x_sin],[0,x_sin,x_cos]])
+    
+    y_matrix=np.matrix([[y_cos,0,y_sin],[0,1,0],[-y_sin,0,y_cos]])
+    
+    z_matrix=np.matrix([[z_cos,-z_sin,0],[z_sin,z_cos,0],[0,0,1]])
+    
+    temp_matrix=z_matrix.dot(y_matrix)
+    
+    return temp_matrix.dot(x_matrix)
+
+def calculate_projection_point(object_in_world,x,y,z):
+    temp=np.matrix([[x],[y],[z]])
+    rotation_matrix=calculate_rotation_matrix(object_in_world)
+    temp=rotation_matrix.dot(temp)
+    for i in range(3):
+        temp[i]+=object_in_world.position[i]
+    temp=temp.tolist()
+    return temp[0][0],temp[1][0],temp[2][0]
+def calculate_unprojection_point(object_in_world,x,y,z):
+    temp=np.matrix([[x-object_in_world.position[0]],[y-object_in_world.position[1]],[z-object_in_world.position[2]]])
+    rotation_matrix=calculate_rotation_matrix(object_in_world)
+    rotation_matrix_inv=np.linalg.inv(rotation_matrix)
+    rotation_matrix.dot(temp)
+    temp=temp.tolist()
+    return temp[0][0],temp[1][0],temp[2][0]
+    
+    
+    
+
 # takes a vector (tuple of 2 points, each with a tuple of 3 coordinates)
 # and a tuple of three points of a plane (starting, end x, end y)
 def get_line_intersection_with_plane(line,plane):
@@ -34,7 +75,7 @@ def get_line_intersection_with_plane(line,plane):
     lv = lp2 - lp1
     p1=np.array(plane.p1)
     t = np.dot(plane.normal,p1 - lp1) / np.dot(plane.normal, lv)
-    return lp1 + lv * t
+    return list(lp1 + lv * t)
     
 def get_combinations(elements,length):
     return list(itertools.combinations(elements, length))
@@ -49,6 +90,12 @@ def sphere_normal(sphere,point):
     for i in range(3):
         temp_normal[i]=temp_normal[i]/sum_temp
     return temp_normal
+def normalize_vector(x,y,z):
+    temp=sqrt(x*x+y*y+z*z)
+    return x/temp,y/temp,z/temp
+def dot_product(p1,p2):
+    return p1[0]*p2[0]+p1[1]*p2[1]+p1[2]*p2[2]
+    
         
     #returns the point in points which is closest to point
 def get_closest_point(points,point):
