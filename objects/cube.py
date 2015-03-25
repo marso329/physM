@@ -73,6 +73,8 @@ class cube(objectSuperClass):
         self.first_load=True
         self.max_distance_from_centre=0
         self.create()
+        self.collision_enabled=True
+        self.last_normal=[0,0,0]
     def create(self):
         for i in range(self.number_of_vertices):
             temp=self.vertices[i]
@@ -89,6 +91,8 @@ class cube(objectSuperClass):
         else:
             self.update_everything()
             glCallList(self.index)
+    def get_normal(self,point):
+        return Mmath.normalize_vector(self.last_normal[0],self.last_normal[1],self.last_normal[2])
     #(x,y,z) is a in space, this function return this elements boundary point that is on the line between this point and
     #the elements centre 
     def get_boundary_point(self,object_in_world):
@@ -118,6 +122,7 @@ class cube(objectSuperClass):
             if distance<min:
                 min=distance
                 index=i
+        self.last_normal=self.projection_planes[index].normal
         return solutions[index]
     #checks so point is inside this object, use  unproject if its a point on the edges
     def check_point(self,point):
