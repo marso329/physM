@@ -15,6 +15,14 @@ class sphere(objectSuperClass):
         self.max_distance_from_centre=radius
         self.collision_enabled=True
         self.calculation_sphere=None
+    #checks so point is inside this object, use  unproject if its a point on the edges
+    def check_point(self,point):
+        marginal=var.marginal_for_checking_boundary_checking
+        temp_point=Mmath.calculate_unprojection_point(self, self.position[0], self.position[1], self.position[2])
+        temp=Mmath.get_distance_between_points(temp_point, point)
+        temp=temp<=self.radius
+        print(temp)
+        return temp
     def get_normal(self,point):
         return Mmath.sphere_normal(self.calculation_sphere, point)
     def get_boundary_point(self,object_in_world):

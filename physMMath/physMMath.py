@@ -56,11 +56,19 @@ def calculate_projection_point(object_in_world,x,y,z):
         temp[i]+=object_in_world.position[i]
     temp=temp.tolist()
     return temp[0][0],temp[1][0],temp[2][0]
+
+def rotate_point(object_in_world,x,y,z):
+    temp=np.matrix([[x],[y],[z]])
+    rotation_matrix=calculate_rotation_matrix(object_in_world)
+    temp=rotation_matrix.dot(temp)
+    temp=temp.tolist()
+    return temp[0][0],temp[1][0],temp[2][0]    
+
 def calculate_unprojection_point(object_in_world,x,y,z):
     temp=np.matrix([[x-object_in_world.position[0]],[y-object_in_world.position[1]],[z-object_in_world.position[2]]])
     rotation_matrix=calculate_rotation_matrix(object_in_world)
     rotation_matrix_inv=np.linalg.inv(rotation_matrix)
-    rotation_matrix.dot(temp)
+    rotation_matrix_inv.dot(temp)
     temp=temp.tolist()
     return temp[0][0],temp[1][0],temp[2][0]
     
@@ -74,7 +82,10 @@ def get_line_intersection_with_plane(line,plane):
     lp2=np.array(line.p2)
     lv = lp2 - lp1
     p1=np.array(plane.p1)
-    t = np.dot(plane.normal,p1 - lp1) / np.dot(plane.normal, lv)
+    temp=np.dot(plane.normal, lv)
+    if temp==0.0:
+        temp=1
+    t = np.dot(plane.normal,p1 - lp1) / temp
     return list(lp1 + lv * t)
     
 def get_combinations(elements,length):
@@ -83,13 +94,14 @@ def square(f):
     return f * f
 #returns the normalized normal of the sphere in the point
 def sphere_normal(sphere,point):
-    temp_normal=[sphere.centre[0]-point[0],sphere.centre[1]-point[1],sphere.centre[2]-point[2]]
+    temp_normal=[point[0]-sphere.centre[0],point[1]-sphere.centre[1],point[2]-sphere.centre[2]]
     sum_temp=sqrt(temp_normal[0]*temp_normal[0]+temp_normal[1]*temp_normal[1]+temp_normal[2]*temp_normal[2])
     if sum_temp==0:
         return [0,0,0]
     for i in range(3):
         temp_normal[i]=temp_normal[i]/sum_temp
     return temp_normal
+
 def normalize_vector(x,y,z):
     temp=sqrt(x*x+y*y+z*z)
     return x/temp,y/temp,z/temp

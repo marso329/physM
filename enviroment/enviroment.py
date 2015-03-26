@@ -15,6 +15,7 @@ def render():
         count_fps()
     if var.holding:
         hold()
+    update_ignore_set()
     check_for_collisions()
     glMatrixMode(GL_MODELVIEW)
     #clear buffer
@@ -47,15 +48,28 @@ def check_for_collisions():
             handle_collision(element)
 def handle_collision(elements):
     if var.objects_in_world[elements[0]].collision_enabled and var.objects_in_world[elements[1]].collision_enabled and objects_have_collided(elements):
-        calculate_velocity_after_impact(elements)
+        try:
+            if var.ignore_set[elements]==0:
+                calculate_velocity_after_impact(elements)
+        except KeyError:
+            var.ignore_set[elements]=int(np.floor(var.holding_fps/10.0))
+            calculate_velocity_after_impact(elements)
+def update_ignore_set():
+    for element in var.ignore_set:
+        if var.ignore_set[element]>0:
+            var.ignore_set[element]-=1
 def objects_have_collided(elements):
     boundary_point_one=var.objects_in_world[elements[0]].get_boundary_point(var.objects_in_world[elements[1]])
     boundary_point_two=var.objects_in_world[elements[1]].get_boundary_point(var.objects_in_world[elements[0]])
-    return Mmath.get_distance_between_points(boundary_point_one, boundary_point_two)<var.distance_for_collision
+    #if check_if_objects_inside(elements, boundary_point_one, boundary_point_two):
+     #   return False
+    temp=Mmath.get_distance_between_points(boundary_point_one, boundary_point_two)<var.distance_for_collision
+    return temp
 
 def calculate_velocity_after_impact(elements):
     boundary_point_one=var.objects_in_world[elements[0]].get_boundary_point(var.objects_in_world[elements[1]])
     normal=var.objects_in_world[elements[0]].get_normal(boundary_point_one)
+    print(normal)
     a1=np.dot(var.objects_in_world[elements[0]].position_change,normal)
     a2=np.dot(var.objects_in_world[elements[1]].position_change,normal)
     optimizedP = (2.0 * (a1 - a2)) / (var.objects_in_world[elements[0]].mass + var.objects_in_world[elements[1]].mass)
@@ -64,6 +78,14 @@ def calculate_velocity_after_impact(elements):
     var.objects_in_world[elements[0]].position_change=list(v1_prim)
     var.objects_in_world[elements[1]].position_change=list(v2_prim)
     
+    #returns true if p1 is inside elements[0] or p2 is inside elements[1]
+def check_if_objects_inside(elements,p1,p2):
+    point1=Mmath.calculate_unprojection_point(var.objects_in_world[elements[0]], p2[0], p2[1], p2[2])
+    point2=Mmath.calculate_unprojection_point(var.objects_in_world[elements[1]], p1[0], p1[1], p1[2])
+    temp=(var.objects_in_world[elements[0]].check_point(point1) and var.objects_in_world[elements[1]].check_point(point2))
+    if temp:
+        print("elements: "+str(elements[0]) +" is inside object: " +str(elements[1]))
+    return temp
 def run_functions():
     for i in range(var.functions_in_mainloop):
         var.functions_to_run_in_mainloop[i]()

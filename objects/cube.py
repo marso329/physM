@@ -81,8 +81,9 @@ class cube(objectSuperClass):
             temp_new=(temp[0]*self.length/2.0,temp[1]*self.width/2.0,temp[2]*self.height/2.0)
             self.vertices[i]=temp_new
             for element in self.vertices[i]:
-                if element>self.max_distance_from_centre:
+                if abs(element)>self.max_distance_from_centre:
                     self.max_distance_from_centre=element
+        
             
     def load(self):
         if self.first_load:
@@ -92,7 +93,30 @@ class cube(objectSuperClass):
             self.update_everything()
             glCallList(self.index)
     def get_normal(self,point):
-        return Mmath.normalize_vector(self.last_normal[0],self.last_normal[1],self.last_normal[2])
+        temp=Mmath.calculate_unprojection_point(self, point[0], point[1], point[2])
+        x=self.length/2-0.01
+        y=self.width/2-0.01
+        z=self.height/2-0.01
+        if temp[0]<=x and temp[0]>=-x and temp[1]<=y and temp[1]>=-y  and temp[2]>0:
+            return (0,0,1)
+        if temp[0]<=x and temp[0]>=-x and temp[1]<y and temp[1]>=-y  and temp[2]<0:
+            return (0,0,-1)
+        if temp[0]>0  and temp[1]<=y and temp[1]>=-y  and temp[2]>=-z and temp[2]<z:
+            return (1,0,0)
+        if temp[0]<0  and temp[1]<=y and temp[1]>=-y  and temp[2]>=-z and temp[2]<=z:
+            return (-1,0,0)
+        
+        if temp[0]>=-x and temp[0]<=x  and temp[1]>0   and temp[2]>=-z and temp[2]<=z:
+            return (0,1,0)
+        if temp[0]>=-x and temp[0]<=x  and temp[1]<=0   and temp[2]>=-z and temp[2]<=z:
+            return (0,-1,0)
+        return (0,0,0)
+        
+        
+        
+        
+        
+        #return Mmath.normalize_vector(self.last_normal[0],self.last_normal[1],self.last_normal[2])
     #(x,y,z) is a in space, this function return this elements boundary point that is on the line between this point and
     #the elements centre 
     def get_boundary_point(self,object_in_world):
@@ -126,7 +150,7 @@ class cube(objectSuperClass):
         return solutions[index]
     #checks so point is inside this object, use  unproject if its a point on the edges
     def check_point(self,point):
-        marginal=var.marginal_for_checking_boundary_checking
+        marginal=var.marginal_for_checking_boundary_checking/2.0
         return abs(point[0])-marginal<self.length/2.0 and abs(point[1])-marginal<self.width/2.0 and abs(point[2])-marginal<self.height/2.0
     def check_solution(self,solution):
         element=solution

@@ -47,10 +47,11 @@ class objectSuperClass:
     def collision_possible(self,object_in_world):
         collision=True
         for i in range(3):
-            if not((object_in_world.position[i] + object_in_world.max_distance_from_centre + self.max_distance_from_centre > self.position[i])
-                    and (self.position[i]+self.max_distance_from_centre+object_in_world.max_distance_from_centre>object_in_world.position[i])):
+            if ((self.position[i]+self.max_distance_from_centre<=object_in_world.position[i]-object_in_world.max_distance_from_centre) or 
+                (object_in_world.position[i]+object_in_world.max_distance_from_centre<=self.position[i]-self.max_distance_from_centre)):
                 collision=False
         return collision  
+    
     def update_time(self):
         self.dt=time.time()-self.time_since_change
         self.time_since_change=time.time()

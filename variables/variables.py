@@ -1,10 +1,12 @@
 objects_in_world={}
 number_of_objects_in_world=0
+ignore_set={}
+
 window=None
 background_color=(0,0,0,0)
 background_color_string="BLACK"
 viewing_center=(0,0,0)
-viewing_position=(-10,-10,0)
+viewing_position=(-10,10,0)
 key_bindings={}
 
 
@@ -28,8 +30,8 @@ functions_to_run_in_mainloop={}
 
 gravity_vector=(0,0,-2.82)
 
-distance_for_collision=0.01
+distance_for_collision=0.05
 
-marginal_for_checking_boundary_checking=0.1
+marginal_for_checking_boundary_checking=0.01
 
 max_value_for_solution=10000
