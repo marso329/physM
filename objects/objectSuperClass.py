@@ -13,6 +13,8 @@ import variables.variables as var
 import physMMath.physMMath as Mmath
 import inspect
 import time
+import numpy as np
+from enviroment.enviroment import add_function_to_mainloop
 
 class objectSuperClass:
     def __init__(self):
@@ -36,6 +38,9 @@ class objectSuperClass:
         self.collision_enabled=False
         self.mass=1.0
         self.first_load=True
+        self.move_queue=[]
+        self.moving=False
+        self.move_to_position=(0,0,0)
         
     #returns a line instance of a line between self and object_in_world
     def get_line_between_objects(self,object_in_world):
@@ -51,6 +56,62 @@ class objectSuperClass:
     def load(self):
         caller = inspect.getouterframes(inspect.currentframe())[1][3]
         raise NotImplementedError(caller + ' must be implemented in subclass')
+    
+    #moves x,y,z relative to current position
+    def move_relative(self,x,y,z,v):
+        temp=self.position
+        self.move_to(temp[0]+x, temp[1]+y, temp[2]+z, v)
+        
+    #moves to x,y,z with velocity v
+    def move_to(self,x,y,z,v):
+        assert(isinstance(v,(int,float)))
+        assert(v>0)
+        if self.moving:
+            self.move_queue.append((x,y,z,v))
+            return
+        
+        self.moving=True
+        direction=(x-self.position[0],y-self.position[1],z-self.position[2])
+        if direction[0]!=0:
+            v1=v/(np.sqrt(1+direction[1]**2/direction[0]**2+direction[2]**2/direction[0]**2))
+            v2=v1*direction[1]/direction[0]
+            v3=v1*direction[2]/direction[0]
+        elif direction[1]!=0:
+            v2=v/(np.sqrt(1+direction[0]**2/direction[1]**2+direction[2]**2/direction[1]**2))
+            v1=v2*direction[0]/direction[1]
+            v3=v2*direction[2]/direction[1]
+        elif direction[2]!=0:
+            v3=v/(np.sqrt(1+direction[1]**2/direction[2]**2+direction[0]**2/direction[2]**2))
+            v2=v3*direction[1]/direction[2]
+            v1=v3*direction[0]/direction[2]
+        else:
+            return
+        if direction[0]!=0:
+            v1=v1*(direction[0]/abs(direction[0]))
+        if direction[1]!=0:
+            v2=v2*(direction[1]/abs(direction[1]))
+        if direction[2]!=0:
+            v3=v3*(direction[2]/abs(direction[2]))
+        self.position_change=(v1,v2,v3)
+        self.move_to_position=(x,y,z)
+        def checker():
+            collision=True
+            for i in range(3):
+                if ((self.position[i]+var.distance_for_collision<=self.move_to_position[i]-var.distance_for_collision) or 
+                (self.move_to_position[i]+var.distance_for_collision<=self.position[i]-var.distance_for_collision)):
+                    collision=False
+            if collision:
+                self.position_change=(0,0,0)
+                var.functions_to_run_in_mainloop[self.check_function]=lambda:None
+                if len(self.move_queue):
+                    temp=self.move_queue[0]
+                    self.move_queue.pop(0)
+                    self.moving=False
+                    self.move_to(temp[0], temp[1], temp[2], temp[3])
+                self.moving=False
+        add_function_to_mainloop(checker)
+        self.check_function=var.functions_in_mainloop-1
+            
     
     #Subclasses does not need this one, it is voluntary
     def create(self):
@@ -90,10 +151,23 @@ class objectSuperClass:
             self.position[0]+=self.position_change[0]*self.dt
             self.position[1]+=self.position_change[1]*self.dt
             self.position[2]+=self.position_change[2]*self.dt
+
         else:
             self.position[0]+=(self.position_change[0]+self.mover.position_change[0])*self.dt
             self.position[1]+=(self.position_change[1]+self.mover.position_change[1])*self.dt
             self.position[2]+=(self.position_change[2]+self.mover.position_change[2])*self.dt
+            temp=list(self.move_to_position)
+            temp[0]+=(self.mover.position_change[0])*self.dt
+            temp[1]+=(self.mover.position_change[1])*self.dt
+            temp[2]+=(self.mover.position_change[2])*self.dt
+            self.move_to_position=tuple(temp)
+            for i in range(len(self.move_queue)):
+                temp=list(self.move_queue[i])
+                temp[0]+=(self.mover.position_change[0])*self.dt
+                temp[1]+=(self.mover.position_change[1])*self.dt
+                temp[2]+=(self.mover.position_change[2])*self.dt
+                self.move_queue[i]=tuple(temp)
+                
     
     def update_velocity(self):
         self.position_change[0]+=var.gravity_vector[0]*self.dt

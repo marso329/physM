@@ -10,7 +10,8 @@ u'GREEN': (0.0, 0.5, 0.0),
 u'YELLOW': (0.75, 0.75, 0),
 u'BLACK': (0.0, 0.0, 0.0),
 u'RED': (1.0, 0.0, 0.0), 
-u'MAGENTA': (0.75, 0, 0.75)
+u'MAGENTA': (0.75, 0, 0.75),
+u'GRAY': (0.75, 0.75, 0.75)
 }
 PRIMITIVE_LOOKUP={3:GL_TRIANGLES
                   }

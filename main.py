@@ -9,4 +9,5 @@ import tests
 
 #tests.ligtning_test()
 
-tests.texture_cube()
+tests.test_move()
+#tests.texture_cube()

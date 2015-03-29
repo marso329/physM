@@ -19,6 +19,14 @@ def texture_cube():
     bind_key(con.DOWN, temp_light.turn_light_off)
     glutMainLoop()
     
+def test_move():
+    temp_cube=cube.cube(1,1,1,"RED")
+    #temp_cube.move_to(5, 5, 5, 1)
+    #temp_cube.move_to(0, 0, 0, 1)
+    temp_cube.move_to(0, 0, 5, 1)
+    temp_cube.set_solid()
+    var.viewing_position=(10,10,5)
+    glutMainLoop()
 def rotating_cube():
     temp_cube=cube.cube(20,20,1,"RED")
     temp_cube.set_solid()
