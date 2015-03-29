@@ -1,5 +1,6 @@
 
 from OpenGL.GLUT import *
+from OpenGL.GL import *
 from OpenGL.raw.GL.ARB.tessellation_shader import GL_TRIANGLES
 #Fell free to add more colors
 COLORS = {
@@ -13,6 +14,15 @@ u'MAGENTA': (0.75, 0, 0.75)
 }
 PRIMITIVE_LOOKUP={3:GL_TRIANGLES
                   }
+
+lights={0:GL_LIGHT0,
+        1:GL_LIGHT1,
+        2:GL_LIGHT2,
+        3:GL_LIGHT3,
+        4:GL_LIGHT4,
+        5:GL_LIGHT5,
+        6:GL_LIGHT6,
+        7:GL_LIGHT7,}
 
 #standardcolor used then the color is not in the COLOR dict 
 STANDARD_COLOR=COLORS["BLACK"]

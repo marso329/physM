@@ -5,7 +5,7 @@ import variables.variables as var
 import physMMath.physMMath as Mmath
 import inspect
 import time
-from OpenGL.GL.VERSION.GL_1_0 import glGetDoublev
+#from OpenGL.GL.VERSION.GL_1_0 import glGetDoublev
 class objectSuperClass:
     def __init__(self):
         self.color=(1.0,1.0,1.0)
@@ -27,6 +27,7 @@ class objectSuperClass:
         self.max_distance_from_centre=0
         self.collision_enabled=False
         self.mass=1.0
+        self.first_load=True
     def get_line_between_objects(self,object_in_world):
         return Mmath.line(tuple(self.position),tuple(object_in_world.position))
         

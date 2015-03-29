@@ -77,3 +77,20 @@ glutIdleFunc(render)
 #glutReshapeFunc(resize_window)
 bind_key(ESCAPE, exit_function)
 
+#ligtning
+globAmb = [0.3, 0.3, 0.3, 1.0]
+lightAmb = [0.0, 0.0, 0.0, 1.0]
+lightDifAndSpec = [1, 1, 1, 1.0]
+lightPos0 = var.light_position
+glEnable(GL_LIGHTING)
+
+#glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb)
+#glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDifAndSpec)
+#glLightfv(GL_LIGHT0, GL_SPECULAR, lightDifAndSpec)
+#glLightfv(GL_LIGHT0, GL_POSITION, lightPos0)
+#glEnable(GL_LIGHT0)
+glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb)
+glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE)
+glEnable(GL_COLOR_MATERIAL)
+glEnable(GL_CULL_FACE)
+glCullFace(GL_BACK)

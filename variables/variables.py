@@ -1,3 +1,4 @@
+from OpenGL.GL import *
 objects_in_world={}
 number_of_objects_in_world=0
 ignore_set={}
@@ -6,9 +7,10 @@ window=None
 background_color=(0,0,0,0)
 background_color_string="BLACK"
 viewing_center=(0,0,0)
-viewing_position=(-10,10,0)
+viewing_position=(0,10,0)
+light_position=(0,0,5,1)
 key_bindings={}
-
+number_of_light=0
 
 #for fps counting
 timer_resolution=0.1

@@ -28,6 +28,15 @@ def render():
             0.0, 0.0,  1.0)
     #set the background
     glClearColor(var.background_color[0],var.background_color[1],var.background_color[2],var.background_color[3])
+    #glPushMatrix()
+    #pos = var.light_position
+    #direction = [0.0, 0, -1.0]
+    #spotAngle = 40
+    #glLightfv(GL_LIGHT0, GL_POSITION, pos)
+    #glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, spotAngle)
+    #glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, direction)
+    #glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 2)
+    
     #load all objects
     for i in range(var.number_of_objects_in_world):
         glPushMatrix()
@@ -58,6 +67,7 @@ def update_ignore_set():
     for element in var.ignore_set:
         if var.ignore_set[element]>0:
             var.ignore_set[element]-=1
+            
 def objects_have_collided(elements):
     boundary_point_one=var.objects_in_world[elements[0]].get_boundary_point(var.objects_in_world[elements[1]])
     boundary_point_two=var.objects_in_world[elements[1]].get_boundary_point(var.objects_in_world[elements[0]])
@@ -69,7 +79,6 @@ def objects_have_collided(elements):
 def calculate_velocity_after_impact(elements):
     boundary_point_one=var.objects_in_world[elements[0]].get_boundary_point(var.objects_in_world[elements[1]])
     normal=var.objects_in_world[elements[0]].get_normal(boundary_point_one)
-    print(normal)
     a1=np.dot(var.objects_in_world[elements[0]].position_change,normal)
     a2=np.dot(var.objects_in_world[elements[1]].position_change,normal)
     optimizedP = (2.0 * (a1 - a2)) / (var.objects_in_world[elements[0]].mass + var.objects_in_world[elements[1]].mass)
