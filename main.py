@@ -7,4 +7,6 @@ import tests
 #tests.test_collision_high_speed()
 #tests.rotating_cube()
 
-tests.ligtning_test()
+#tests.ligtning_test()
+
+tests.texture_cube()

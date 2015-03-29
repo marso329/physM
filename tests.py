@@ -1,8 +1,24 @@
 from loader.setup import *
-from objects import cube, objectFile, sphere, cylinder,line,light
+from objects import cube, objectFile, sphere, cylinder,line,light,textureCube
 import random
 import physMMath
 
+
+def texture_cube():
+    temp_cube=textureCube.textureCube(1,1,1,"NeHe.bmp")
+    temp_cube.change_angular_velocity(20, 0, 0)
+    temp_cube.change_velocity(-1,0,0)
+    
+    temp_cube1=textureCube.textureCube(1,1,1,"NeHe.bmp")
+    temp_cube1.change_position(-5, 0, 0)
+    temp_cube1.change_velocity(3, 0, 0)
+    
+    var.viewing_position=(5,5,5)
+    temp_light=light.light(0,0,5)
+    bind_key(con.UP, temp_light.turn_light_on)
+    bind_key(con.DOWN, temp_light.turn_light_off)
+    glutMainLoop()
+    
 def rotating_cube():
     temp_cube=cube.cube(20,20,1,"RED")
     temp_cube.set_solid()
@@ -10,7 +26,6 @@ def rotating_cube():
    # temp_cube.change_angular_velocity(-10, 0, 0)
     var.viewing_position=(15,15,5)
     var.light_position=(0,0,5,1)
-    glutMainLoop()
     
 def ligtning_test():
     temp_light=light.light(0,0,5)
@@ -22,8 +37,8 @@ def ligtning_test():
     temp_cube.change_position(2, 0, 0)
     temp_cube.change_velocity(-1, 0, 0)
     temp_cube.change_angular_velocity(200, 0, 0)
-    
-    
+    bind_key(con.UP, temp_light.turn_light_on)
+    bind_key(con.DOWN, temp_light.turn_light_off)
     var.viewing_position=(5,5,5)
     var.light_position=(0,0,6,1)
     glutMainLoop()

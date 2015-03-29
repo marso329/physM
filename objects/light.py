@@ -21,6 +21,13 @@ class light(objectSuperClass):
         self.direction=[0,0,-1]
         self.light_angle=40
         self.exponent=2
+        self.enabled=True
+    
+    def turn_light_off(self):
+        glDisable(self.light)
+    
+    def turn_light_on(self):
+        glEnable(self.light)
         
     def load_first(self):
         glLightfv(self.light, GL_AMBIENT, self.ambient)
