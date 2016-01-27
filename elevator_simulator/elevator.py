@@ -53,3 +53,4 @@ class elevator():
             self.right_door.move_relative(0, -5, 0, 2)
             self.open=False
         
+        

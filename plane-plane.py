@@ -1,0 +1,18 @@
+from loader.setup import *
+from objects import cube, objectFile, sphere, cylinder,line
+set_background_color("WHITE")
+var.viewing_position=(20,15,15)
+temp_cube1=cube.cube(10,10,0.1,"BLUE")
+temp_line1=cube.cube(0.1,0.1,20,"RED")
+temp_line1.set_solid()
+temp_cube1.set_solid()
+temp_cube2=cube.cube(10,0.1,10,"BLUE")
+temp_line2=cube.cube(0.1,20,0.1,"YELLOW")
+temp_line2.set_solid()
+temp_cube2.set_solid()
+temp_line2.change_position(0,-1,4)
+temp_cube2.change_position(0,-1,4)
+temp_cube3=cube.cube(20,0.1,0.1,"GREEN")
+temp_cube3.change_position(6,0,1)
+temp_cube3.set_solid()
+glutMainLoop()
